@@ -8,7 +8,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
  */
 public class NYTimesClient {
 
-    private final static String BASE_URL= "https://api.nytimes.com/svc/";
+    private final static String BASE_URL= "https://api.nytimes.com/";
     private final static NYTimesClient INSTANCE = new NYTimesClient();
     private NYTimesService nytimesService;
     private NYTimesClient() {
@@ -17,6 +17,10 @@ public class NYTimesClient {
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build();
         nytimesService = retrofit.create(NYTimesService.class);
+    }
+
+    public static NYTimesClient getInstance() {
+        return INSTANCE;
     }
 
     public NYTimesService getNytimesService() {
