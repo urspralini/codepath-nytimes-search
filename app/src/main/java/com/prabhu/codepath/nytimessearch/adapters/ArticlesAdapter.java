@@ -21,10 +21,11 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public static final String THUMBNAIL_TYPE = "wide";
     private List<Doc> mArticles;
     private Context mContext;
-
-    public ArticlesAdapter(Context context, List<Doc> articles) {
+    private OnItemClickListener mListener;
+    public ArticlesAdapter(Context context, List<Doc> articles, OnItemClickListener listener) {
         this.mArticles = articles;
         this.mContext = context;
+        this.mListener = listener;
     }
 
 
@@ -38,7 +39,18 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Context context = parent.getContext();
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         final View itemView = layoutInflater.inflate(R.layout.list_item_article, parent, false);
-        return new ArticleViewHolder(itemView);
+        final ArticleViewHolder articleViewHolder = new ArticleViewHolder(itemView);
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mListener != null){
+                    final int position = articleViewHolder.getLayoutPosition();
+                    final Doc article = mArticles.get(position);
+                    mListener.onItemClick(article);
+                }
+            }
+        });
+        return articleViewHolder;
     }
 
     @Override
@@ -73,6 +85,10 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void clear() {
         mArticles.clear();
         notifyDataSetChanged();
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Doc article);
     }
 
 

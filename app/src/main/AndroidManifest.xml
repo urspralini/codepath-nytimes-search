@@ -19,6 +19,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.SearchFiltersActivity"
+            android:theme="@style/AppTheme2"
+            android:label="@string/search_filter_options"
             android:parentActivityName=".activities.ArticlesListActivity">
 
         </activity>

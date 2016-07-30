@@ -2,4 +2,11 @@
     <string name="app_name">NYTimesSearch</string>
     <string name="search_text_hint">Enter Search Query</string>
     <string name="title_activity_search_filters">Search Filter Options</string>
+    <string name="search_filter_options">Search Filter Options</string>
+    <string name="begin_date">Begin Date</string>
+    <string name="sort_order">Sort Order</string>
+    <string name="arts">Arts</string>
+    <string name="fashion_style">Fashion</string>
+    <string name="sports">Sports</string>
+
 </resources>

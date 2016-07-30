@@ -12,5 +12,9 @@ import retrofit2.http.Query;
 public interface NYTimesService {
 
     @GET("svc/search/v2/articlesearch.json?api-key=bc0a5b235d26478d9d66a4ece023928b&fl=web_url,multimedia,headline")
-    Call<NYTimesArticleSearchResponse> getArticles(@Query("q") String query, @Query("page") int page);
+    Call<NYTimesArticleSearchResponse> getArticles(@Query("q") String query,
+                                                   @Query("page") int page,
+                                                   @Query("begin_date") String beginDate,
+                                                   @Query("sort") String sortOrder,
+                                                   @Query("fq") String fq);
 }
