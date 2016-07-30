@@ -128,11 +128,11 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
         String fq = newDeskValues != null ?
                 String.format("news_desk:(%s)", newDeskValues):null;
         final Call<NYTimesArticleSearchResponse> articlesSearchCall = nyTimesService.getArticles(mQuery, page,
-                beginDate,sortOrder,null);
+                beginDate,sortOrder,fq);
         final Callback<NYTimesArticleSearchResponse> callback = new Callback<NYTimesArticleSearchResponse>() {
             @Override
             public void onResponse(Call<NYTimesArticleSearchResponse> call, Response<NYTimesArticleSearchResponse> response) {
-                if(response != null && response.body().getResponse()!= null) {
+                if(response != null && response.body()!= null) {
                     final List<Doc> articles = response.body().getResponse().getDocs();
                     List<Doc> articlesWithImages = new ArrayList<>();
                     for(Doc article : articles) {
