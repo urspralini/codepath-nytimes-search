@@ -4,7 +4,6 @@ package com.prabhu.codepath.nytimessearch.models;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Doc {
 
     @JsonProperty("web_url")
@@ -32,7 +30,7 @@ public class Doc {
     @JsonProperty("source")
     private String source;
     @JsonProperty("multimedia")
-    private List<Multimedium> multimedia = new ArrayList<Multimedium>();
+    private List<Multimedia> multimedia = new ArrayList<Multimedia>();
     @JsonProperty("headline")
     private Headline headline;
     @JsonProperty("keywords")
@@ -47,7 +45,7 @@ public class Doc {
     private String sectionName;
     @JsonProperty("subsection_name")
     private String subsectionName;
-    @JsonProperty("byline")
+    @JsonIgnore
     private Byline byline;
     @JsonProperty("type_of_material")
     private String typeOfMaterial;
@@ -206,7 +204,7 @@ public class Doc {
      *     The multimedia
      */
     @JsonProperty("multimedia")
-    public List<Multimedium> getMultimedia() {
+    public List<Multimedia> getMultimedia() {
         return multimedia;
     }
 
@@ -216,7 +214,7 @@ public class Doc {
      *     The multimedia
      */
     @JsonProperty("multimedia")
-    public void setMultimedia(List<Multimedium> multimedia) {
+    public void setMultimedia(List<Multimedia> multimedia) {
         this.multimedia = multimedia;
     }
 
@@ -365,7 +363,6 @@ public class Doc {
      * @return
      *     The byline
      */
-    @JsonProperty("byline")
     public Byline getByline() {
         return byline;
     }
@@ -375,7 +372,6 @@ public class Doc {
      * @param byline
      *     The byline
      */
-    @JsonProperty("byline")
     public void setByline(Byline byline) {
         this.byline = byline;
     }

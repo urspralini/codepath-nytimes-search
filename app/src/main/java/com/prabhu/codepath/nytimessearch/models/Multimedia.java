@@ -13,7 +13,7 @@ import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Multimedium {
+public class Multimedia {
 
     @JsonProperty("width")
     private Integer width;
