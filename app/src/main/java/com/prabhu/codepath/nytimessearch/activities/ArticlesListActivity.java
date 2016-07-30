@@ -1,5 +1,6 @@
 package com.prabhu.codepath.nytimessearch.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
@@ -33,6 +34,7 @@ import retrofit2.Response;
 public class ArticlesListActivity extends AppCompatActivity {
     public static final String THUMBNAIL_TYPE = "wide";
     private static final String LOG_TAG = ArticlesListActivity.class.getSimpleName();
+    public static final int SPAN_COUNT = 3;
     private List<Doc> mArticles = new ArrayList<>();
     private ArticlesAdapter mArticlesAdapter;
     private final NYTimesService nyTimesService = NYTimesClient.getInstance()
@@ -44,7 +46,7 @@ public class ArticlesListActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         RecyclerView rvArticles = (RecyclerView)findViewById(R.id.rvArticles);
-        rvArticles.setLayoutManager(new GridLayoutManager(this, 3));
+        rvArticles.setLayoutManager(new GridLayoutManager(this, SPAN_COUNT));
         int spaceInPixels = getResources().getDimensionPixelSize(R.dimen.spacing);
         ArticleItemDecoration itemDecoration = new ArticleItemDecoration(spaceInPixels);
         rvArticles.addItemDecoration(itemDecoration);
@@ -78,6 +80,17 @@ public class ArticlesListActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        final int itemId = item.getItemId();
+        if(itemId == R.id.action_filter) {
+            Intent filtersIntent = new Intent(this, SearchFiltersActivity.class);
+            startActivity(filtersIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private boolean hasThumbnailImage(Doc doc) {
         final List<Multimedia> multimediaList = doc.getMultimedia();
         if(multimediaList == null || multimediaList.isEmpty()) return false;
@@ -101,7 +114,7 @@ public class ArticlesListActivity extends AppCompatActivity {
                     }
                 }
                 mArticlesAdapter.addAll(articlesWithImages);
-                if (mArticlesAdapter.getItemCount() <= 21) {
+                if (mArticlesAdapter.getItemCount() <= 28) {
                     fetchArticles(query, page+1);
                 }
             }
