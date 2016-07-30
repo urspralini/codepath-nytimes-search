@@ -92,6 +92,7 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
         final int itemId = item.getItemId();
         if(itemId == R.id.action_filter) {
             Intent filtersIntent = new Intent(this, SearchFiltersActivity.class);
+            filtersIntent.putExtra(SearchFiltersActivity.FILTER_OPTIONS_KEY, mFilterOptions);
             startActivityForResult(filtersIntent, OPTIONS_REQUEST_CODE);
             return true;
         }
@@ -120,7 +121,7 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
 
 
     private void fetchArticles(final int page) {
-        String beginDate = mFilterOptions.getDate();
+        String beginDate = mFilterOptions.getDateWithoutSeparator();
         String sortOrder = mFilterOptions.getSortOrder() != null ?
                 mFilterOptions.getSortOrder().name().toLowerCase() : null;
         final String newDeskValues = mFilterOptions.getNewDeskValues();

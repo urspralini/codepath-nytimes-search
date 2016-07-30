@@ -22,7 +22,7 @@ import java.util.Calendar;
 public class SearchFiltersActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
 
     public static final String FILTER_OPTIONS_KEY = "filterOptionsKey";
-    private FilterOptions mFilterOptions = new FilterOptions();
+    private FilterOptions mFilterOptions;
     private EditText mBeginDate;
     private Spinner mSpinner;
     private CheckBox mArts;
@@ -33,6 +33,7 @@ public class SearchFiltersActivity extends AppCompatActivity implements DatePick
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFilterOptions = getIntent().getParcelableExtra(FILTER_OPTIONS_KEY);
         setContentView(R.layout.activity_search_filters);
         mBeginDate = (EditText)findViewById(R.id.etBeginDate);
         mSpinner = (Spinner)findViewById(R.id.spinnerSortOrder);
@@ -103,6 +104,7 @@ public class SearchFiltersActivity extends AppCompatActivity implements DatePick
 
             }
         });
+        populateUI(mFilterOptions);
     }
 
     @Override
@@ -125,6 +127,40 @@ public class SearchFiltersActivity extends AppCompatActivity implements DatePick
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
         mBeginDate.setText(String.format("%d/%d/%d", monthOfYear+1, dayOfMonth, year));
-        mFilterOptions.setDate(String.format("%d%02d%02d",year, monthOfYear+1, dayOfMonth));
+        mFilterOptions.setDayOfMonth(dayOfMonth);
+        mFilterOptions.setMonthOfYear(monthOfYear);
+        mFilterOptions.setYear(year);
+    }
+
+
+    private void populateUI(FilterOptions mFilterOptions) {
+        if(mFilterOptions.getDate() != null) {
+            mBeginDate.setText(mFilterOptions.getDate());
+        }
+        if(mFilterOptions.getSortOrder() != null) {
+            switch(mFilterOptions.getSortOrder()) {
+                case Newest:
+                    mSpinner.setSelection(FilterOptions.SortOrder.Newest.ordinal());
+                    break;
+                default:
+                    mSpinner.setSelection(FilterOptions.SortOrder.Oldest.ordinal());
+            }
+        }
+        mArts.setChecked(false);
+        mFashion.setChecked(false);
+        mSports.setChecked(false);
+        if(mFilterOptions.getNewsDeskValues() != null) {
+            for(String newsDeskValue : mFilterOptions.getNewsDeskValues()) {
+                if(newsDeskValue.equals(getString(R.string.arts))) {
+                    mArts.setChecked(true);
+                }
+                if(newsDeskValue.equals(getString(R.string.sports))) {
+                    mSports.setChecked(true);
+                }
+                if(newsDeskValue.equals(getString(R.string.fashion_style))) {
+                    mFashion.setChecked(true);
+                }
+            }
+        }
     }
 }

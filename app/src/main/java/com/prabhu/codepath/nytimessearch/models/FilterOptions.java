@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,18 +13,11 @@ import java.util.Set;
  * Created by pbabu on 7/30/16.
  */
 public class FilterOptions implements Parcelable {
-    public static final Parcelable.Creator<FilterOptions> CREATOR = new Parcelable.Creator<FilterOptions>() {
-        @Override
-        public FilterOptions createFromParcel(Parcel source) {
-            return new FilterOptions(source);
-        }
 
-        @Override
-        public FilterOptions[] newArray(int size) {
-            return new FilterOptions[size];
-        }
-    };
-    private String date;
+    private int year;
+    private int monthOfYear;
+    private int dayOfMonth;
+
     private SortOrder sortOrder;
     private Set<String> newsDeskValues;
 
@@ -31,27 +25,13 @@ public class FilterOptions implements Parcelable {
     public FilterOptions() {
         sortOrder = SortOrder.Newest;
         newsDeskValues = new HashSet<>();
+        //set today's date
+        final Calendar calendar = Calendar.getInstance();
+        year = calendar.get(Calendar.YEAR);
+        monthOfYear = calendar.get(Calendar.MONTH);
+        dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
     }
 
-    protected FilterOptions(Parcel in) {
-        this.date = in.readString();
-        int tmpSortOrder = in.readInt();
-        this.sortOrder = tmpSortOrder == -1 ? null : SortOrder.values()[tmpSortOrder];
-        int newDeskValueSize = in.readInt();
-        if(newDeskValueSize > 0) {
-            List<String> newsDeskValues = new ArrayList<>();
-            in.readStringList(newsDeskValues);
-            this.newsDeskValues = new HashSet<>(newsDeskValues);
-        }
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
 
     public Set<String> getNewsDeskValues() {
         return newsDeskValues;
@@ -69,27 +49,6 @@ public class FilterOptions implements Parcelable {
         this.sortOrder = sortOrder;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.date);
-        dest.writeInt(this.sortOrder == null ? -1 : this.sortOrder.ordinal());
-        dest.writeInt(this.newsDeskValues.size());
-        if(newsDeskValues.size() > 0){
-            dest.writeStringList(new ArrayList<>(this.newsDeskValues));
-        }
-
-    }
-
-    public enum SortOrder {
-        Newest,
-        Oldest
-    }
-
     public void addNewsDesk(String newsDesk) {
         newsDeskValues.add(newsDesk);
     }
@@ -99,14 +58,97 @@ public class FilterOptions implements Parcelable {
     }
 
     public String getNewDeskValues() {
-        if(newsDeskValues == null || newsDeskValues.isEmpty()) return null;
+        if (newsDeskValues == null || newsDeskValues.isEmpty()) return null;
         StringBuilder sb = new StringBuilder();
-        for(String newsDeskValue : newsDeskValues) {
-            if(sb.length() > 0) {
+        for (String newsDeskValue : newsDeskValues) {
+            if (sb.length() > 0) {
                 sb.append(" ");
             }
-            sb.append("\"" +newsDeskValue + "\"");
+            sb.append("\"" + newsDeskValue + "\"");
         }
         return sb.toString();
+    }
+
+    public enum SortOrder {
+        Newest,
+        Oldest
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.year);
+        dest.writeInt(this.monthOfYear);
+        dest.writeInt(this.dayOfMonth);
+        dest.writeInt(this.sortOrder == null ? -1 : this.sortOrder.ordinal());
+        dest.writeInt(this.newsDeskValues.size());
+        if(this.newsDeskValues.size() > 0){
+            List<String> newDeskValues = new ArrayList<>(this.newsDeskValues);
+            dest.writeStringList(newDeskValues);
+        }
+    }
+
+    protected FilterOptions(Parcel in) {
+        this.year = in.readInt();
+        this.monthOfYear = in.readInt();
+        this.dayOfMonth = in.readInt();
+        int tmpSortOrder = in.readInt();
+        this.sortOrder = tmpSortOrder == -1 ? null : SortOrder.values()[tmpSortOrder];
+        final int newDeskValuesSize = in.readInt();
+        this.newsDeskValues = new HashSet<>();
+        if(newDeskValuesSize > 0) {
+            List<String> newDeskValues = new ArrayList<>();
+            in.readStringList(newDeskValues);
+            this.newsDeskValues.addAll(newDeskValues);
+        }
+    }
+
+    public static final Parcelable.Creator<FilterOptions> CREATOR = new Parcelable.Creator<FilterOptions>() {
+        @Override
+        public FilterOptions createFromParcel(Parcel source) {
+            return new FilterOptions(source);
+        }
+
+        @Override
+        public FilterOptions[] newArray(int size) {
+            return new FilterOptions[size];
+        }
+    };
+
+    public String getDate() {
+        return String.format("%d/%d/%d", monthOfYear+1, dayOfMonth, year);
+    }
+
+    public String getDateWithoutSeparator() {
+        return String.format("%d%02d%02d",year, monthOfYear+1, dayOfMonth);
+    }
+
+    public int getDayOfMonth() {
+        return dayOfMonth;
+    }
+
+    public void setDayOfMonth(int dayOfMonth) {
+        this.dayOfMonth = dayOfMonth;
+    }
+
+    public int getMonthOfYear() {
+        return monthOfYear;
+    }
+
+    public void setMonthOfYear(int monthOfYear) {
+        this.monthOfYear = monthOfYear;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
     }
 }
