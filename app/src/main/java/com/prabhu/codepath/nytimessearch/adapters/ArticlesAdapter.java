@@ -70,5 +70,10 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyDataSetChanged();
     }
 
+    public void clear() {
+        mArticles.clear();
+        notifyDataSetChanged();
+    }
+
 
 }
