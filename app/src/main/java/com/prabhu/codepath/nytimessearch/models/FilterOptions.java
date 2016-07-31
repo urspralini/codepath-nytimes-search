@@ -17,7 +17,7 @@ public class FilterOptions implements Parcelable {
     private int year;
     private int monthOfYear;
     private int dayOfMonth;
-
+    private boolean dateSelected;
     private SortOrder sortOrder;
     private Set<String> newsDeskValues;
 
@@ -30,6 +30,7 @@ public class FilterOptions implements Parcelable {
         year = calendar.get(Calendar.YEAR);
         monthOfYear = calendar.get(Calendar.MONTH);
         dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        dateSelected = false;
     }
 
 
@@ -86,6 +87,7 @@ public class FilterOptions implements Parcelable {
         dest.writeInt(this.monthOfYear);
         dest.writeInt(this.dayOfMonth);
         dest.writeInt(this.sortOrder == null ? -1 : this.sortOrder.ordinal());
+        dest.writeInt(dateSelected ? 1 : 0);
         dest.writeInt(this.newsDeskValues.size());
         if(this.newsDeskValues.size() > 0){
             List<String> newDeskValues = new ArrayList<>(this.newsDeskValues);
@@ -99,6 +101,8 @@ public class FilterOptions implements Parcelable {
         this.dayOfMonth = in.readInt();
         int tmpSortOrder = in.readInt();
         this.sortOrder = tmpSortOrder == -1 ? null : SortOrder.values()[tmpSortOrder];
+        final int dateSelectedInt = in.readInt();
+        this.dateSelected = dateSelectedInt == 1 ? true: false;
         final int newDeskValuesSize = in.readInt();
         this.newsDeskValues = new HashSet<>();
         if(newDeskValuesSize > 0) {
@@ -121,11 +125,15 @@ public class FilterOptions implements Parcelable {
     };
 
     public String getDate() {
-        return String.format("%d/%d/%d", monthOfYear+1, dayOfMonth, year);
+        return dateSelected ?
+                String.format("%d/%d/%d", monthOfYear+1, dayOfMonth, year):
+                null;
     }
 
     public String getDateWithoutSeparator() {
-        return String.format("%d%02d%02d",year, monthOfYear+1, dayOfMonth);
+        return dateSelected ?
+                String.format("%d%02d%02d",year, monthOfYear+1, dayOfMonth):
+                null;
     }
 
     public int getDayOfMonth() {
@@ -150,5 +158,13 @@ public class FilterOptions implements Parcelable {
 
     public void setYear(int year) {
         this.year = year;
+    }
+
+    public boolean isDateSelected() {
+        return dateSelected;
+    }
+
+    public void setDateSelected(boolean dateSelected) {
+        this.dateSelected = dateSelected;
     }
 }

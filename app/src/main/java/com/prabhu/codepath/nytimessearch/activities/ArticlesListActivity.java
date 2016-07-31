@@ -19,6 +19,7 @@ import android.widget.EditText;
 import com.prabhu.codepath.nytimessearch.R;
 import com.prabhu.codepath.nytimessearch.adapters.ArticlesAdapter;
 import com.prabhu.codepath.nytimessearch.decorators.ArticleItemDecoration;
+import com.prabhu.codepath.nytimessearch.listeners.EndlessRecyclerViewScrollListener;
 import com.prabhu.codepath.nytimessearch.models.Doc;
 import com.prabhu.codepath.nytimessearch.models.FilterOptions;
 import com.prabhu.codepath.nytimessearch.models.Multimedia;
@@ -52,12 +53,19 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         RecyclerView rvArticles = (RecyclerView)findViewById(R.id.rvArticles);
-        rvArticles.setLayoutManager(new GridLayoutManager(this, SPAN_COUNT));
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, SPAN_COUNT);
+        rvArticles.setLayoutManager(gridLayoutManager);
         int spaceInPixels = getResources().getDimensionPixelSize(R.dimen.spacing);
         ArticleItemDecoration itemDecoration = new ArticleItemDecoration(spaceInPixels);
         rvArticles.addItemDecoration(itemDecoration);
         mArticlesAdapter = new ArticlesAdapter(this, mArticles, this);
         rvArticles.setAdapter(mArticlesAdapter);
+        rvArticles.addOnScrollListener(new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                fetchArticles(page);
+            }
+        });
     }
 
     @Override
@@ -134,16 +142,7 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
             public void onResponse(Call<NYTimesArticleSearchResponse> call, Response<NYTimesArticleSearchResponse> response) {
                 if(response != null && response.body()!= null) {
                     final List<Doc> articles = response.body().getResponse().getDocs();
-                    List<Doc> articlesWithImages = new ArrayList<>();
-                    for(Doc article : articles) {
-                        if(hasThumbnailImage(article)) {
-                            articlesWithImages.add(article);
-                        }
-                    }
-                    mArticlesAdapter.addAll(articlesWithImages);
-                    if (mArticlesAdapter.getItemCount() <= 28) {
-                        fetchArticles(page+1);
-                    }
+                    mArticlesAdapter.addAll(articles);
                 }
             }
 

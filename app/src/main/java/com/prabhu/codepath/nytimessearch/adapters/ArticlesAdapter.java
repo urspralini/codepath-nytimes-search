@@ -18,7 +18,10 @@ import java.util.List;
  * Created by pbabu on 7/29/16.
  */
 public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    public static final String THUMBNAIL_TYPE = "wide";
+    public static final String MULTIMEDIA_WIDE = "wide";
+    public static final int THUMBNAIL_WIDE_TARGET_WIDTH = 190;
+    public static final int THUMBNAIL_WIDE_TARGET_HEIGHT = 126;
+    public static final String MULTIMEDIA_XLARGE = "xlarge";
     private List<Doc> mArticles;
     private Context mContext;
     private OnItemClickListener mListener;
@@ -57,21 +60,41 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Doc article = mArticles.get(position);
         final List<Multimedia> multimediaList = article.getMultimedia();
-        Multimedia thumbnail = null;
+        Multimedia thumbnailWide = null;
+        Multimedia xLarge = null;
         for(Multimedia multimedia: multimediaList) {
-            if(multimedia.getSubtype().equals(THUMBNAIL_TYPE)){
-                thumbnail = multimedia;
-                break;
+            if(multimedia.getSubtype().equals(MULTIMEDIA_WIDE)){
+                thumbnailWide = multimedia;
+            }else if (multimedia.getSubtype().equals(MULTIMEDIA_XLARGE)) {
+                xLarge = multimedia;
             }
         }
         ArticleViewHolder articleViewHolder = (ArticleViewHolder)holder;
         articleViewHolder.tvArticleHeadline.setText(article.getHeadline().getMain());
-        if(thumbnail != null) {
-            String imageUrl = String.format("http://www.nytimes.com/%s", thumbnail.getUrl());
-            Picasso.with(mContext).load(imageUrl)
+        if(thumbnailWide != null || xLarge != null) {
+            String imageUrl;
+            int targetWidth;
+            int targetHeight;
+            if(thumbnailWide != null) {
+                imageUrl = thumbnailWide.getUrl();
+                targetHeight = thumbnailWide.getHeight();
+                targetWidth = thumbnailWide.getWidth();
+            }else {
+                imageUrl = xLarge.getUrl();
+                targetHeight = THUMBNAIL_WIDE_TARGET_HEIGHT;
+                targetWidth = THUMBNAIL_WIDE_TARGET_WIDTH;
+
+            }
+            String imageFullUrl = String.format("http://www.nytimes.com/%s", imageUrl);
+            Picasso.with(mContext).load(imageFullUrl)
+                    .placeholder(R.drawable.placeholder)
+                    .resize(targetWidth,
+                            targetHeight)
                     .into(articleViewHolder.ivArticleImage);
-        }else {
-            Picasso.with(mContext).load(R.drawable.image_placeholder)
+        } else{
+            Picasso.with(mContext).load(R.drawable.placeholder)
+                    .resize(THUMBNAIL_WIDE_TARGET_WIDTH,
+                            THUMBNAIL_WIDE_TARGET_HEIGHT)
                     .into(articleViewHolder.ivArticleImage);
         }
 

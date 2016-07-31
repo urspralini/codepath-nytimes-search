@@ -115,6 +115,9 @@ public class SearchFiltersActivity extends AppCompatActivity implements DatePick
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 Intent data = new Intent();
+                if(mBeginDate.getText().length() == 0) {
+                    mFilterOptions.setDateSelected(false);
+                }
                 data.putExtra(FILTER_OPTIONS_KEY, mFilterOptions);
                 setResult(RESULT_OK, data);
                 finish();
@@ -130,6 +133,7 @@ public class SearchFiltersActivity extends AppCompatActivity implements DatePick
         mFilterOptions.setDayOfMonth(dayOfMonth);
         mFilterOptions.setMonthOfYear(monthOfYear);
         mFilterOptions.setYear(year);
+        mFilterOptions.setDateSelected(true);
     }
 
 
