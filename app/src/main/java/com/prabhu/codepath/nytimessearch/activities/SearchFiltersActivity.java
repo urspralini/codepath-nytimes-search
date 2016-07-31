@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -30,6 +29,10 @@ public class SearchFiltersActivity extends AppCompatActivity implements DatePick
     private CheckBox mSports;
     private DatePickerDialog mDPD;
     public static final int DEFAULT_SORT_POSITION = 0;
+    private int year;
+    private int monthOfYear;
+    private int dayOfMonth;
+    private boolean dateSelected;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,46 +55,12 @@ public class SearchFiltersActivity extends AppCompatActivity implements DatePick
                 android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(spinnerAdapter);
         mSpinner.setSelection(DEFAULT_SORT_POSITION);
-        CompoundButton.OnCheckedChangeListener checkedChangeListener = new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton view, boolean b) {
-                switch (view.getId()) {
-                    case R.id.checkbox_arts:
-                        final String arts = getString(R.string.arts);
-                        if(view.isChecked()) {
-                            mFilterOptions.addNewsDesk(arts);
-                        }else {
-                            mFilterOptions.removeNewsDesk(arts);
-                        }
-                        break;
-                    case R.id.checkbox_fashion:
-                        final String fashionStyle = getString(R.string.fashion_style);
-                        if(view.isChecked()) {
-                            mFilterOptions.addNewsDesk(fashionStyle);
-                        }else {
-                            mFilterOptions.removeNewsDesk(fashionStyle);
-                        }
-                        break;
-                    case R.id.checkbox_sports:
-                        final String sports = getString(R.string.sports);
-                        if(view.isChecked()) {
-                            mFilterOptions.addNewsDesk(sports);
-                        }else {
-                            mFilterOptions.removeNewsDesk(sports);
-                        }
-                        break;
-                }
-            }
-        };
         mBeginDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mDPD.show(getFragmentManager(),"Datepickerdialog");
             }
         });
-        mArts.setOnCheckedChangeListener(checkedChangeListener);
-        mFashion.setOnCheckedChangeListener(checkedChangeListener);
-        mSports.setOnCheckedChangeListener(checkedChangeListener);
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
@@ -118,6 +87,28 @@ public class SearchFiltersActivity extends AppCompatActivity implements DatePick
                 if(mBeginDate.getText().length() == 0) {
                     mFilterOptions.setDateSelected(false);
                 }
+                final String arts = getString(R.string.arts);
+                if(mArts.isChecked()) {
+                    mFilterOptions.addNewsDesk(arts);
+                }else {
+                    mFilterOptions.removeNewsDesk(arts);
+                }
+                final String fashionStyle = getString(R.string.fashion_style);
+                if(mFashion.isChecked()) {
+                    mFilterOptions.addNewsDesk(fashionStyle);
+                }else {
+                    mFilterOptions.removeNewsDesk(fashionStyle);
+                }
+                final String sports = getString(R.string.sports);
+                if(mSports.isChecked()) {
+                    mFilterOptions.addNewsDesk(sports);
+                }else {
+                    mFilterOptions.removeNewsDesk(sports);
+                }
+                mFilterOptions.setYear(SearchFiltersActivity.this.year);
+                mFilterOptions.setMonthOfYear(SearchFiltersActivity.this.monthOfYear);
+                mFilterOptions.setDayOfMonth(SearchFiltersActivity.this.dayOfMonth);
+                mFilterOptions.setDateSelected(SearchFiltersActivity.this.dateSelected);
                 data.putExtra(FILTER_OPTIONS_KEY, mFilterOptions);
                 setResult(RESULT_OK, data);
                 finish();
@@ -130,10 +121,9 @@ public class SearchFiltersActivity extends AppCompatActivity implements DatePick
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
         mBeginDate.setText(String.format("%d/%d/%d", monthOfYear+1, dayOfMonth, year));
-        mFilterOptions.setDayOfMonth(dayOfMonth);
-        mFilterOptions.setMonthOfYear(monthOfYear);
-        mFilterOptions.setYear(year);
-        mFilterOptions.setDateSelected(true);
+        this.year = year;
+        this.dayOfMonth = dayOfMonth;
+        dateSelected = true;
     }
 
 
