@@ -12,18 +12,14 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.ArticlesListActivity">
+        <activity android:name=".activities.ArticlesListActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.SearchFiltersActivity"
-            android:label="@string/search_filter_options"
-            android:parentActivityName=".activities.ArticlesListActivity"
-            android:theme="@style/AppTheme2"></activity>
         <activity android:name=".activities.WebViewActivity"
             android:theme="@style/AppTheme2"
             android:parentActivityName=".activities.ArticlesListActivity"></activity>

@@ -3,6 +3,7 @@ package com.prabhu.codepath.nytimessearch.activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -19,6 +20,7 @@ import android.widget.ProgressBar;
 import com.prabhu.codepath.nytimessearch.R;
 import com.prabhu.codepath.nytimessearch.adapters.ArticlesAdapter;
 import com.prabhu.codepath.nytimessearch.decorators.ArticleItemDecoration;
+import com.prabhu.codepath.nytimessearch.fragments.SearchFiltersFragment;
 import com.prabhu.codepath.nytimessearch.listeners.EndlessRecyclerViewScrollListener;
 import com.prabhu.codepath.nytimessearch.models.Doc;
 import com.prabhu.codepath.nytimessearch.models.FilterOptions;
@@ -33,7 +35,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ArticlesListActivity extends AppCompatActivity implements ArticlesAdapter.OnItemClickListener{
+public class ArticlesListActivity extends AppCompatActivity implements ArticlesAdapter.OnItemClickListener,
+        SearchFiltersFragment.FilterOptionsUpdateListener {
     public static final String THUMBNAIL_TYPE = "wide";
     private static final String LOG_TAG = ArticlesListActivity.class.getSimpleName();
     public static final int SPAN_COUNT = 3;
@@ -107,23 +110,15 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
     public boolean onOptionsItemSelected(MenuItem item) {
         final int itemId = item.getItemId();
         if(itemId == R.id.action_filter) {
-            Intent filtersIntent = new Intent(this, SearchFiltersActivity.class);
-            filtersIntent.putExtra(SearchFiltersActivity.FILTER_OPTIONS_KEY, mFilterOptions);
-            startActivityForResult(filtersIntent, OPTIONS_REQUEST_CODE);
-            return true;
+            FragmentManager fm = getSupportFragmentManager();
+            SearchFiltersFragment searchFiltersFragment = SearchFiltersFragment.newInstance("Search Filter Options");
+            Bundle args = new Bundle();
+            args.putParcelable(SearchFiltersFragment.FILTER_OPTIONS_KEY, mFilterOptions);
+            searchFiltersFragment.setArguments(args);
+            searchFiltersFragment.show(fm, "search_filters_fragment");
+
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == OPTIONS_REQUEST_CODE) {
-            if(resultCode == RESULT_OK) {
-                mFilterOptions = data.getParcelableExtra(SearchFiltersActivity.FILTER_OPTIONS_KEY);
-                mArticlesAdapter.clear();
-                fetchArticles(0);
-            }
-        }
     }
 
     private void fetchArticles(final int page) {
@@ -169,5 +164,12 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
 
     private void hideProgressBar() {
         miProgressBarItem.setVisible(false);
+    }
+
+    @Override
+    public void onFilterOptionsChanged(FilterOptions filterOptions) {
+        mFilterOptions = filterOptions;
+        mArticlesAdapter.clear();
+        fetchArticles(0);
     }
 }
