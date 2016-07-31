@@ -44,7 +44,7 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
             .getNytimesService();
     public static int OPTIONS_REQUEST_CODE = 1000;
     private FilterOptions mFilterOptions = new FilterOptions();
-    private String mQuery = "Hillary Clinton";
+    private String mQuery = "";
     private EditText mEtSearchText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,22 +135,25 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
         final String newDeskValues = mFilterOptions.getNewDeskValues();
         String fq = newDeskValues != null ?
                 String.format("news_desk:(%s)", newDeskValues):null;
-        final Call<NYTimesArticleSearchResponse> articlesSearchCall = nyTimesService.getArticles(mQuery, page,
-                beginDate,sortOrder,fq);
-        final Callback<NYTimesArticleSearchResponse> callback = new Callback<NYTimesArticleSearchResponse>() {
-            @Override
-            public void onResponse(Call<NYTimesArticleSearchResponse> call, Response<NYTimesArticleSearchResponse> response) {
-                if(response != null && response.body()!= null) {
-                    final List<Doc> articles = response.body().getResponse().getDocs();
-                    mArticlesAdapter.addAll(articles);
+        if(!mQuery.isEmpty()){
+            final Call<NYTimesArticleSearchResponse> articlesSearchCall = nyTimesService.getArticles(mQuery, page,
+                    beginDate,sortOrder,fq);
+            final Callback<NYTimesArticleSearchResponse> callback = new Callback<NYTimesArticleSearchResponse>() {
+                @Override
+                public void onResponse(Call<NYTimesArticleSearchResponse> call, Response<NYTimesArticleSearchResponse> response) {
+                    if(response != null && response.body()!= null) {
+                        final List<Doc> articles = response.body().getResponse().getDocs();
+                        mArticlesAdapter.addAll(articles);
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<NYTimesArticleSearchResponse> call, Throwable t) {
-                Log.d(LOG_TAG, "results:" + t.getMessage());
-            }
-        }; articlesSearchCall.enqueue(callback);
+                @Override
+                public void onFailure(Call<NYTimesArticleSearchResponse> call, Throwable t) {
+                    Log.d(LOG_TAG, "results:" + t.getMessage());
+                }
+            };
+            articlesSearchCall.enqueue(callback);
+        }
     }
 
     @Override
