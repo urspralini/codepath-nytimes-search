@@ -70,7 +70,7 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         final MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.articles_list_menu, menu);
+        menuInflater.inflate(R.menu.menu_articles_list, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         int searchEditId = android.support.v7.appcompat.R.id.search_src_text;
