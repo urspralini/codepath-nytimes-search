@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import com.prabhu.codepath.nytimessearch.R;
 import com.prabhu.codepath.nytimessearch.adapters.ArticlesAdapter;
@@ -21,7 +22,6 @@ import com.prabhu.codepath.nytimessearch.decorators.ArticleItemDecoration;
 import com.prabhu.codepath.nytimessearch.listeners.EndlessRecyclerViewScrollListener;
 import com.prabhu.codepath.nytimessearch.models.Doc;
 import com.prabhu.codepath.nytimessearch.models.FilterOptions;
-import com.prabhu.codepath.nytimessearch.models.Multimedia;
 import com.prabhu.codepath.nytimessearch.models.NYTimesArticleSearchResponse;
 import com.prabhu.codepath.nytimessearch.rest.NYTimesClient;
 import com.prabhu.codepath.nytimessearch.rest.NYTimesService;
@@ -45,6 +45,8 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
     private FilterOptions mFilterOptions = new FilterOptions();
     private String mQuery = "";
     private EditText mEtSearchText;
+    private MenuItem miProgressBarItem;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +97,13 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        miProgressBarItem = menu.findItem(R.id.miActionProgress);
+        final ProgressBar v = (ProgressBar)MenuItemCompat.getActionView(miProgressBarItem);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         final int itemId = item.getItemId();
         if(itemId == R.id.action_filter) {
@@ -117,17 +126,8 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
         }
     }
 
-    private boolean hasThumbnailImage(Doc doc) {
-        final List<Multimedia> multimediaList = doc.getMultimedia();
-        if(multimediaList == null || multimediaList.isEmpty()) return false;
-        for(Multimedia multimedia : multimediaList){
-            if(multimedia.getSubtype().equals(THUMBNAIL_TYPE)) return true;
-        }
-        return false;
-    }
-
-
     private void fetchArticles(final int page) {
+        showProgressBar();
         String beginDate = mFilterOptions.getDateWithoutSeparator();
         String sortOrder = mFilterOptions.getSortOrder() != null ?
                 mFilterOptions.getSortOrder().name().toLowerCase() : null;
@@ -140,6 +140,7 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
             final Callback<NYTimesArticleSearchResponse> callback = new Callback<NYTimesArticleSearchResponse>() {
                 @Override
                 public void onResponse(Call<NYTimesArticleSearchResponse> call, Response<NYTimesArticleSearchResponse> response) {
+                    hideProgressBar();
                     if(response != null && response.body()!= null) {
                         final List<Doc> articles = response.body().getResponse().getDocs();
                         mArticlesAdapter.addAll(articles);
@@ -160,5 +161,13 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
         Intent browserIntent = new Intent(this, WebViewActivity.class);
         browserIntent.putExtra(WebViewActivity.URL_KEY, article.getWebUrl());
         startActivity(browserIntent);
+    }
+
+    private void showProgressBar() {
+        miProgressBarItem.setVisible(true);
+    }
+
+    private void hideProgressBar() {
+        miProgressBarItem.setVisible(false);
     }
 }

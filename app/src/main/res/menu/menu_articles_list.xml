@@ -12,4 +12,11 @@
         android:title="Filter"
         android:icon="@drawable/ic_menu_filter"
         app:showAsAction="ifRoom|collapseActionView" />
+    <item
+        android:id="@+id/miActionProgress"
+        android:title="Loading..."
+        android:visible="false"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        app:actionLayout="@layout/layout_progress_bar" />
 </menu>
