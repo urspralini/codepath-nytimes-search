@@ -4,6 +4,7 @@
 
     <!-- listing all user permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -18,12 +19,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.SearchFiltersActivity"
-            android:theme="@style/AppTheme2"
+        <activity
+            android:name=".activities.SearchFiltersActivity"
             android:label="@string/search_filter_options"
-            android:parentActivityName=".activities.ArticlesListActivity">
-
-        </activity>
+            android:parentActivityName=".activities.ArticlesListActivity"
+            android:theme="@style/AppTheme2"></activity>
+        <activity android:name=".activities.WebViewActivity"
+            android:theme="@style/AppTheme2"
+            android:parentActivityName=".activities.ArticlesListActivity"></activity>
     </application>
 
 </manifest>

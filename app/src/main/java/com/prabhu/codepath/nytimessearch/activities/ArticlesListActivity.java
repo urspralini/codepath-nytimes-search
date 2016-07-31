@@ -2,7 +2,6 @@ package com.prabhu.codepath.nytimessearch.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -158,7 +157,8 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
 
     @Override
     public void onItemClick(Doc article) {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(article.getWebUrl()));
+        Intent browserIntent = new Intent(this, WebViewActivity.class);
+        browserIntent.putExtra(WebViewActivity.URL_KEY, article.getWebUrl());
         startActivity(browserIntent);
     }
 }
