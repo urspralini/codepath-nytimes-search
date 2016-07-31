@@ -78,7 +78,7 @@ public class SearchFiltersActivity extends AppCompatActivity implements DatePick
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.filters_search_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_filters_search, menu);
         MenuItem saveItem = menu.findItem(R.id.action_save);
         saveItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
