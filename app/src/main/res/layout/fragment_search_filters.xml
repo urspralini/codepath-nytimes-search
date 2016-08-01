@@ -38,7 +38,7 @@
         android:text="@string/sort_order"
         android:id="@+id/tvSortOrder"
         android:textColor="@color/grey"
-        android:layout_above="@+id/checkbox_arts"
+        android:layout_alignTop="@+id/spinnerSortOrder"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
     <Spinner
