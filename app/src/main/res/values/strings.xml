@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">NYTimesSearch</string>
+    <string name="app_name">NYTSearch</string>
+    <string name="list_activity_name">NewYork Times</string>
+    <string name="detail_activity_name">NY Detail Article</string>
     <string name="search_text_hint">Enter Search Query</string>
     <string name="title_activity_search_filters">Search Filter Options</string>
     <string name="search_filter_options">Search Filter Options</string>
