@@ -8,5 +8,7 @@
     <string name="arts">Arts</string>
     <string name="fashion_style">Fashion</string>
     <string name="sports">Sports</string>
+    <string name="no_internet_text">You are not connected to Internet.\n Check your internet connection</string>
+    <string name="snackbar_internet_action_text">Turn on Internet</string>
 
 </resources>
