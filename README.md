@@ -42,7 +42,8 @@ The following **bonus** features are implemented:
 The following **additional** features are implemented:
 
 * [X] Used Progress Bar
-* [X] Used Jackson Library instead of GSON library.
+* [X] Used **Jackson Library** instead of GSON library.
+* [X] Used **Splash Screen**.
 
 ## Video Walkthrough
 
@@ -58,7 +59,7 @@ Describe any challenges encountered while building the app.
 
 ## Open-source libraries used
 
-- [Android Async HTTP](https://github.com/loopj/android-async-http) - Simple asynchronous HTTP requests with JSON parsing
+- [Retrofit 2](http://square.github.io/retrofit/) - A type-safe HTTP client for Android and Java
 - [Picasso](http://square.github.io/picasso/) - Image loading and caching library for Android
 
 ## License
