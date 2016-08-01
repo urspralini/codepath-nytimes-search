@@ -13,22 +13,28 @@ import android.view.View;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.RelativeLayout;
 
 import com.prabhu.codepath.nytimessearch.R;
+import com.prabhu.codepath.nytimessearch.utils.Helper;
 
 public class WebViewActivity extends AppCompatActivity {
 
     public static final String URL_KEY = "url";
     private ShareActionProvider miShareAction;
     private WebView mWebView;
+    private RelativeLayout mRlWebView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
+        mRlWebView = (RelativeLayout)findViewById(R.id.rlWebView);
         mWebView = (WebView)findViewById(R.id.webview);
         configureWebView(mWebView);
         String url = getIntent().getStringExtra(URL_KEY);
-        if(url != null && !url.isEmpty()) {
+        if(!Helper.isNetworkAvailable(this) || !Helper.isOnline()){
+            Helper.showSnackBar(mRlWebView, this);
+        }else if(url != null && !url.isEmpty()) {
             mWebView.loadUrl(url);
         }
     }
@@ -43,6 +49,11 @@ public class WebViewActivity extends AppCompatActivity {
         shareIntent.putExtra(Intent.EXTRA_TEXT, mWebView.getUrl());
         miShareAction.setShareIntent(shareIntent);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void configureWebView(WebView webView){

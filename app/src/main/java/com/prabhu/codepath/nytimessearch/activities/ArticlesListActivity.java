@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.prabhu.codepath.nytimessearch.R;
 import com.prabhu.codepath.nytimessearch.adapters.ArticlesAdapter;
@@ -27,6 +28,7 @@ import com.prabhu.codepath.nytimessearch.models.FilterOptions;
 import com.prabhu.codepath.nytimessearch.models.NYTimesArticleSearchResponse;
 import com.prabhu.codepath.nytimessearch.rest.NYTimesClient;
 import com.prabhu.codepath.nytimessearch.rest.NYTimesService;
+import com.prabhu.codepath.nytimessearch.utils.Helper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,11 +51,12 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
     private String mQuery = "";
     private EditText mEtSearchText;
     private MenuItem miProgressBarItem;
-
+    private RelativeLayout mRlArticleList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_articles);
+        mRlArticleList = (RelativeLayout)findViewById(R.id.rlArticleList);
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         RecyclerView rvArticles = (RecyclerView)findViewById(R.id.rvArticles);
@@ -122,32 +125,36 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
     }
 
     private void fetchArticles(final int page) {
-        showProgressBar();
-        String beginDate = mFilterOptions.getDateWithoutSeparator();
-        String sortOrder = mFilterOptions.getSortOrder() != null ?
-                mFilterOptions.getSortOrder().name().toLowerCase() : null;
-        final String newDeskValues = mFilterOptions.getNewDeskValues();
-        String fq = newDeskValues != null ?
-                String.format("news_desk:(%s)", newDeskValues):null;
-        if(!mQuery.isEmpty()){
-            final Call<NYTimesArticleSearchResponse> articlesSearchCall = nyTimesService.getArticles(mQuery, page,
-                    beginDate,sortOrder,fq);
-            final Callback<NYTimesArticleSearchResponse> callback = new Callback<NYTimesArticleSearchResponse>() {
-                @Override
-                public void onResponse(Call<NYTimesArticleSearchResponse> call, Response<NYTimesArticleSearchResponse> response) {
-                    hideProgressBar();
-                    if(response != null && response.body()!= null) {
-                        final List<Doc> articles = response.body().getResponse().getDocs();
-                        mArticlesAdapter.addAll(articles);
+        if(Helper.isNetworkAvailable(this) && Helper.isOnline()) {
+            showProgressBar();
+            String beginDate = mFilterOptions.getDateWithoutSeparator();
+            String sortOrder = mFilterOptions.getSortOrder() != null ?
+                    mFilterOptions.getSortOrder().name().toLowerCase() : null;
+            final String newDeskValues = mFilterOptions.getNewDeskValues();
+            String fq = newDeskValues != null ?
+                    String.format("news_desk:(%s)", newDeskValues):null;
+            if(!mQuery.isEmpty()){
+                final Call<NYTimesArticleSearchResponse> articlesSearchCall = nyTimesService.getArticles(mQuery, page,
+                        beginDate,sortOrder,fq);
+                final Callback<NYTimesArticleSearchResponse> callback = new Callback<NYTimesArticleSearchResponse>() {
+                    @Override
+                    public void onResponse(Call<NYTimesArticleSearchResponse> call, Response<NYTimesArticleSearchResponse> response) {
+                        hideProgressBar();
+                        if(response != null && response.body()!= null) {
+                            final List<Doc> articles = response.body().getResponse().getDocs();
+                            mArticlesAdapter.addAll(articles);
+                        }
                     }
-                }
 
-                @Override
-                public void onFailure(Call<NYTimesArticleSearchResponse> call, Throwable t) {
-                    Log.d(LOG_TAG, "results:" + t.getMessage());
-                }
-            };
-            articlesSearchCall.enqueue(callback);
+                    @Override
+                    public void onFailure(Call<NYTimesArticleSearchResponse> call, Throwable t) {
+                        Log.d(LOG_TAG, "results:" + t.getMessage());
+                    }
+                };
+                articlesSearchCall.enqueue(callback);
+            }
+        }else {
+            Helper.showSnackBar(mRlArticleList, this);
         }
     }
 
@@ -171,5 +178,13 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesA
         mFilterOptions = filterOptions;
         mArticlesAdapter.clear();
         fetchArticles(0);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!Helper.isNetworkAvailable(this) || !Helper.isOnline()){
+            Helper.showSnackBar(mRlArticleList, this);
+        }
     }
 }
